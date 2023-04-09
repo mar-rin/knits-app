@@ -1,0 +1,1 @@
+export const fieldNames = ["orderNo", "date", "customer", "trackingNo", "status", "consignee"] 

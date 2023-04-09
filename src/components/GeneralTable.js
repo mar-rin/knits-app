@@ -11,9 +11,7 @@ import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 
 
-
 export default function GeneralTable({ data, handleSort, handleEdit, handleDelete }) {
-
  
   return (
     <TableContainer component={Paper}>
