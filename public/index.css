@@ -15,6 +15,26 @@ body {
   background-color: rgb(237, 242, 248);
 }
 
+#customer {
+  justify-content: space-between;
+  flex-direction: row;
+  display: flex;
+}
+
+#sort-customer {
+  justify-content: flex-end;
+  display: flex;
+}
+
+#sort-date {
+  margin-left: 40px;
+  margin-right: -10px;
+}
+
+#customer-label {
+  margin-top: 7px;
+}
+
 .button-block {
   display: flex;
   flex-direction: row;
@@ -59,3 +79,4 @@ h4 {
   margin: 20px 0 6px 4px;
   padding-left: 5px;
 }
+
