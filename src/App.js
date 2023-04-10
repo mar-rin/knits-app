@@ -11,14 +11,13 @@ function App() {
   const navigate = useNavigate();
   const url = "https://my.api.mockaroo.com/shipments.json?key=5e0b62d0";
   const [data, setData] = useState([]);
-  const [openShipment, setOpenShipment] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [tempData, setTempData] = useState({});
   const [activeIndex, setActiveIndex] = useState(-1);
   const [customerIsSorted, setCustomerIsSorted] = useState(false);
   const [dateIsSorted, setDateIsSorted] = useState(false);
 
-
+//FETCHING DATA. IF FETCH NOT SUCCESSFUL, THEN USING LOCALLY SAVED DATA
   useEffect(() => {
       axios
         .get(url)
@@ -32,15 +31,23 @@ function App() {
         .finally(setIsLoading(false));
   }, []);
 
-
+//OPENING DETAIL VIEW AND SETTING DATA TO BE EDITED
   function handleEdit(e){
     navigate("/detail/" + e.currentTarget.id);
-    setActiveIndex(data.findIndex(item => item.trackingNo === e.currentTarget.id));
-    setOpenShipment(data.filter(item => item.trackingNo === e.currentTarget.id));
-    setTempData({...tempData, orderNo: "", date:"", customer: "", status: "", consignee: ""})
+    const selectedIndex = data.findIndex(item => item.trackingNo === e.currentTarget.id);
+    setActiveIndex(selectedIndex);
+    setTempData({
+      ...tempData,
+      orderNo: data[selectedIndex].orderNo,
+      date: data[selectedIndex].date,
+      customer: data[selectedIndex].customer,
+      trackingNo: data[selectedIndex].trackingNo,
+      status: data[selectedIndex].status,
+      consignee: data[selectedIndex].consignee
+    })
   }
 
-
+//HANDLING USER INPUT IN DETAIL VIEW.
   function handleChange(e) {
     for (let key in tempData) {
       if (key === e.target.name) {
@@ -50,26 +57,35 @@ function App() {
     }
   }
 
-
+//A CHECK FOR CORRECT DATE FORMAT. THEN
+//SAVING USER INPUT TO DATA BY CREATING A DEEP COPY OF ORIGINAL DATASET
   function handleSave() {
-    const newData = [...data];
-    newData[activeIndex] = {
-      orderNo: tempData.orderNo,
-      date: tempData.date,
-      customer: tempData.customer,
-      status: tempData.status,
-      trackingNo: openShipment[0].trackingNo,
-      consignee: tempData.consignee};
-    setData(newData);
-    navigate("/");
+    const editedDate = tempData.date;
+    const pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+    const isValidDate = pattern.test(editedDate);
+    if (!isValidDate) {
+      alert("Invalid date format! Please check input.");
+    } else {
+      const newData = [...data];
+      newData[activeIndex] = {
+        orderNo: tempData.orderNo,
+        date: tempData.date,
+        customer: tempData.customer,
+        status: tempData.status,
+        trackingNo: tempData.trackingNo,
+        consignee: tempData.consignee
+      };
+      setData(newData);
+      navigate("/");
+    }
   }
 
-  
+//HANDLING ITEM DELETE
   function handleDelete(e) {
     setData(data.filter(item => item.trackingNo !== e.currentTarget.id))
   }
 
-
+//HANDLING SORTING OF CUSTOMER FIELD, IN BOTH ASC AND DESC ORDER
   function handleSort() {
     if (!customerIsSorted) {
       let dataSortAsc = (data.sort((a, b) => {
@@ -92,6 +108,7 @@ function App() {
     }
   }
 
+//HANDLING DATE SORT
   function handleSortDate() {
     if (!dateIsSorted) {
       let dataSortAsc = (data.sort((a, b) => {
@@ -118,8 +135,7 @@ function App() {
     }
   }
   
-
-
+//RENDERING TWO VIEWS: TABLE AND DETAIL, WITH ROUTING
 return (
   <div className="container">
       <Routes>
@@ -139,7 +155,7 @@ return (
           path="/detail/:shipment"
           element={
             <Detail
-              data={data}
+              tempData={tempData}
               handleChange={handleChange}
               handleSave={handleSave}
               />}
@@ -150,4 +166,3 @@ return (
 }
 
 export default App;
-      

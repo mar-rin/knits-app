@@ -8,24 +8,14 @@ import { fieldNames } from '../utils/fieldNames';
 import { useParams, useNavigate } from "react-router-dom";
 
 
-export default function Detail({ data, handleChange, handleSave }) {
+export default function Detail({ tempData, handleChange, handleSave }) {
 
     const disabledFields = [false, false, false, true, false];
     const navigate = useNavigate();
-    let { shipment } = useParams();
-    const [activeData, setActiveData] = useState({});
-
-
-    async function getDataSlice(){
-      setActiveData(data.filter(item => item.trackingNo === shipment))
-    }
-
-    useEffect(() => {getDataSlice()}, [])
-
 
     return (
         <div>
-            { (activeData.length > 0)
+            { (tempData)
             ? <div className='wrapper'>
                 <div className="detail-head"></div>
                 <div className="white-box">
@@ -44,7 +34,7 @@ export default function Detail({ data, handleChange, handleSave }) {
                                         <TextField
                                             name={item}
                                             id="filled-basic"
-                                            placeholder={activeData[0][item]}
+                                            placeholder={tempData[item]}
                                             variant="filled"
                                             onChange={handleChange}
                                             disabled={disabledFields[index]}
